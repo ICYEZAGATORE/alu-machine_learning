@@ -47,6 +47,25 @@ class Poisson:
         denom = self._factorial(k)
         return num / denom
 
+    def cdf(self, k):
+        """
+        Calculates the CDF for a given number of 'successes'.
+
+        Args:
+            k (int): Number of successes
+
+        Returns:
+            float: CDF value for k
+        """
+        k = int(k)
+        if k < 0:
+            return 0
+
+        cdf_sum = 0
+        for i in range(0, k + 1):
+            cdf_sum += self.pmf(i)
+        return cdf_sum
+
     def _factorial(self, n):
         """
         Computes factorial of a number.
@@ -82,4 +101,3 @@ class Poisson:
             if abs(term) < 1e-10:
                 break
         return result
-    
