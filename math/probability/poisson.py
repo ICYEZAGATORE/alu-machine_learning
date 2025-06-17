@@ -11,11 +11,11 @@ class Poisson:
 
         Args:
             data (list): List of data to estimate the distribution.
-            lambtha (float): Expected number of occurrences in a given time frame.
+            lambtha (float): Expected number of occurrences in a time frame.
 
         Raises:
             TypeError: If data is not a list.
-            ValueError: If data contains fewer than two values.
+            ValueError: If data has fewer than two values.
             ValueError: If lambtha is not a positive value.
         """
         if data is None:
@@ -43,7 +43,9 @@ class Poisson:
         if k < 0:
             return 0
 
-        return (self.lambtha ** k * self._exp(-self.lambtha)) / self._factorial(k)
+        num = (self.lambtha ** k) * self._exp(-self.lambtha)
+        denom = self._factorial(k)
+        return num / denom
 
     def _factorial(self, n):
         """
@@ -74,7 +76,9 @@ class Poisson:
         """
         result = 1.0
         term = 1.0
-        for i in range(1, 50):
+        for i in range(1, 100):
             term *= x / i
             result += term
+            if abs(term) < 1e-10:
+                break
         return result
