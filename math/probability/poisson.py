@@ -61,9 +61,20 @@ class Poisson:
         if k < 0:
             return 0
 
+        e_term = self._exp(-self.lambtha)
         cdf_sum = 0
-        for i in range(0, k + 1):
-            cdf_sum += self.pmf(i)
+        factorial = 1
+        power = 1
+
+        for i in range(k + 1):
+            if i > 0:
+                factorial *= i
+                power *= self.lambtha
+            else:
+                factorial = 1
+                power = 1
+            cdf_sum += (power * e_term) / factorial
+
         return cdf_sum
 
     def _factorial(self, n):
