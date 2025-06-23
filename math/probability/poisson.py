@@ -112,3 +112,4 @@ class Poisson:
             if abs(term) < 1e-10:
                 break
         return result
+    
