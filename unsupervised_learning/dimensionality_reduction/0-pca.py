@@ -5,22 +5,25 @@
 import numpy as np
 
 
-def pca(X):
+def pca(X, var=0.95):
     """
-    Performs Principal Component Analysis on a dataset
+    Performs PCA on a dataset
 
     Args:
-        X (numpy.ndarray): shape (m, n) where:
-            m = number of data points
-            n = number of dimensions
+        X (numpy.ndarray): shape (m, n)
+        var (float): fraction of variance to preserve
 
     Returns:
         W (numpy.ndarray): matrix of principal components
     """
-    # Compute covariance matrix
-    cov = np.matmul(X.T, X) / (X.shape[0] - 1)
+    # SVD
+    U, S, Vt = np.linalg.svd(X)
 
-    # Singular Value Decomposition
-    U, S, Vt = np.linalg.svd(cov)
+    # Compute explained variance ratio
+    explained = np.cumsum(S ** 2) / np.sum(S ** 2)
 
-    return U
+    # Find number of components to preserve `var`
+    r = np.searchsorted(explained, var) + 1
+
+    # Return first r principal components
+    return Vt.T[:, :r]
