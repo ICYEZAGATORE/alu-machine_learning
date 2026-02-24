@@ -1,29 +1,45 @@
 #!/usr/bin/env python3
-"""PCA module"""
-
+"""Performs PCA on a dataset"""
 
 import numpy as np
 
 
 def pca(X, var=0.95):
     """
-    Performs PCA on a dataset
+    Performs PCA on a dataset.
 
-    Args:
-        X (numpy.ndarray): shape (m, n)
-        var (float): fraction of variance to preserve
+    Parameters
+    ----------
+    X : numpy.ndarray
+        shape (n, d), centered dataset
+    var : float
+        fraction of variance to preserve
 
-    Returns:
-        W (numpy.ndarray): matrix of principal components
+    Returns
+    -------
+    W : numpy.ndarray
+        shape (d, nd), principal components
     """
-    # SVD
-    U, S, Vt = np.linalg.svd(X)
+    n, d = X.shape
 
-    # Compute explained variance ratio
-    explained = np.cumsum(S ** 2) / np.sum(S ** 2)
+    # Compute covariance matrix
+    cov = np.dot(X.T, X) / (n - 1)
 
-    # Find number of components to preserve `var`
-    r = np.searchsorted(explained, var) + 1
+    # Eigen decomposition
+    eigenvalues, eigenvectors = np.linalg.eigh(cov)
 
-    # Return first r principal components
-    return Vt.T[:, :r]
+    # Sort eigenvalues descending
+    idx = np.argsort(eigenvalues)[::-1]
+    eigenvalues = eigenvalues[idx]
+    eigenvectors = eigenvectors[:, idx]
+
+    # Compute cumulative variance ratio
+    cum_var = np.cumsum(eigenvalues) / np.sum(eigenvalues)
+
+    # Select number of components to reach 'var'
+    nd = np.searchsorted(cum_var, var) + 1
+
+    # Return weight matrix
+    W = eigenvectors[:, :nd]
+
+    return W
