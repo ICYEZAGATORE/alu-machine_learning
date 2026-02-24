@@ -1,35 +1,40 @@
 #!/usr/bin/env python3
-"""Performs PCA using SVD"""
+"""Performs PCA on a dataset"""
 
 import numpy as np
 
+
 def pca(X, var=0.95):
     """
-    Performs PCA on a dataset using SVD.
+    Performs PCA on a dataset.
 
     Parameters
     ----------
-    X : numpy.ndarray, shape (n, d)
+    X : numpy.ndarray of shape (n, d)
         Centered dataset
     var : float
         Fraction of variance to preserve
 
     Returns
     -------
-    W : numpy.ndarray, shape (d, nd)
+    W : numpy.ndarray of shape (d, nd)
         Principal components
     """
-    # SVD
+    n, d = X.shape
+
+    # Step 1: Singular Value Decomposition
     U, S, Vt = np.linalg.svd(X, full_matrices=False)
 
-    # Compute explained variance ratio
-    eigenvalues = S**2
+    # Step 2: Compute eigenvalues (variance along components)
+    eigenvalues = (S ** 2) / (n - 1)
+
+    # Step 3: Compute cumulative variance ratio
     cum_var = np.cumsum(eigenvalues) / np.sum(eigenvalues)
 
-    # Select number of components to preserve `var`
+    # Step 4: Select number of components to preserve 'var'
     nd = np.searchsorted(cum_var, var) + 1
 
-    # Return principal components
+    # Step 5: Return top components
     W = Vt.T[:, :nd]
 
     return W
